@@ -331,7 +331,7 @@ msgstr "Desseleccionar todos os estilos"
 #: ../src/dialog_properties.cpp:95 ../src/preferences.cpp:157
 #: ../src/preferences.cpp:195
 msgid "Options"
-msgstr "Opções"
+msgstr "Opcoes"
 
 #: ../src/dialog_timing_processor.cpp:133
 msgid "Affect &selection only"
@@ -2283,7 +2283,7 @@ msgstr "Abre uma nova janela do programa"
 
 #: ../src/command/app.cpp:209
 msgid "&Options..."
-msgstr "&Opções..."
+msgstr "&Opcoes..."
 
 #: ../src/command/app.cpp:211
 msgid "Configure Aegisub"
@@ -3580,7 +3580,7 @@ msgstr "Níveis máximos de desfazer"
 
 #: ../src/dialog_dummy_video.cpp:88
 msgid "Dummy video options"
-msgstr "Opções do vídeo exemplo"
+msgstr "Opcoes do vídeo exemplo"
 
 #: ../src/dialog_dummy_video.cpp:106
 msgid "Checkerboard &pattern"
@@ -3780,7 +3780,7 @@ msgstr "Mostrar linhas inactivas incluindo comentários"
 
 #: ../src/preferences.cpp:178
 msgid "Display Visual Options"
-msgstr "Mostrar Opções de Exibição"
+msgstr "Mostrar Opcoes de Exibição"
 
 #: ../src/preferences.cpp:179
 msgid "Keyframes in dialogue mode"
@@ -4169,7 +4169,7 @@ msgid ""
 "these unless you know what you're doing."
 msgstr ""
 "Alterar estas configurações pode resultar em bugs/crashes. Não toque nestas "
-"opções se não souber o que está a fazer."
+"opcoes se não souber o que está a fazer."
 
 #: ../src/preferences.cpp:543 ../src/preferences.cpp:604
 msgid "Expert"
@@ -5320,7 +5320,7 @@ msgstr "Caracteres Por Segundo"
 
 #: ../src/dialog_text_import.cpp:47
 msgid "Text import options"
-msgstr "Opções de importação de texto"
+msgstr "Opcoes de importação de texto"
 
 #: ../src/dialog_text_import.cpp:57
 msgid "Actor separator:"
