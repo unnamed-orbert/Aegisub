@@ -36,7 +36,8 @@
 
 #include "include/aegisub/audio_player.h"
 
-extern "C" {
+extern "C"
+{
 #include <portaudio.h>
 }
 
@@ -49,7 +50,8 @@ class wxArrayString;
 /// @class PortAudioPlayer
 /// @brief PortAudio Player
 ///
-class PortAudioPlayer final : public AudioPlayer {
+class PortAudioPlayer final : public AudioPlayer
+{
 	typedef std::vector<PaDeviceIndex> DeviceVec;
 	/// Map of supported output devices from name -> device index
 	std::map<std::string, DeviceVec> devices;
@@ -57,11 +59,11 @@ class PortAudioPlayer final : public AudioPlayer {
 	/// The index of the default output devices sorted by host API priority
 	DeviceVec default_device;
 
-	float volume = 1.f;  ///< Current volume level
+	float volume = 1.f;	 ///< Current volume level
 	int64_t current = 0; ///< Current position
-	int64_t start = 0;   ///< Start position
-	int64_t end = 0;     ///< End position
-	PaTime pa_start;     ///< PortAudio internal start position
+	int64_t start = 0;	 ///< Start position
+	int64_t end = 0;	 ///< End position
+	PaTime pa_start;	 ///< PortAudio internal start position
 
 	PaStream *stream = nullptr; ///< PortAudio stream
 
@@ -77,10 +79,10 @@ class PortAudioPlayer final : public AudioPlayer {
 		const void *inputBuffer,
 		void *outputBuffer,
 		unsigned long framesPerBuffer,
-		const PaStreamCallbackTimeInfo*
-		timeInfo,
+		const PaStreamCallbackTimeInfo *
+			timeInfo,
 		PaStreamCallbackFlags
-		statusFlags,
+			statusFlags,
 		void *userData);
 
 	/// @brief Called when the callback has finished.
@@ -103,7 +105,7 @@ public:
 	/// @brief Play audio.
 	/// @param start Start position.
 	/// @param count Frame count
-	void Play(int64_t start,int64_t count);
+	void Play(int64_t start, int64_t count);
 	/// @brief Stop Playback
 	/// @param timerToo Stop display timer?
 	void Stop();
@@ -123,7 +125,6 @@ public:
 	/// @param pos End position
 	void SetEndPosition(int64_t position) { end = position; }
 
-
 	/// @brief Set volume level
 	/// @param vol Volume
 	void SetVolume(double vol) { volume = vol; }
@@ -135,4 +136,4 @@ public:
 	/// Get list of available output devices
 	static wxArrayString GetOutputDevices();
 };
-#endif //ifdef WITH_PORTAUDIO
+#endif // ifdef WITH_PORTAUDIO

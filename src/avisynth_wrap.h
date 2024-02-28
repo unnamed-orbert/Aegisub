@@ -37,12 +37,17 @@
 #include <libaegisub/exception.h>
 
 class IScriptEnvironment;
-namespace std { class mutex; }
+namespace std
+{
+	class mutex;
+}
 
-class AviSynthWrapper {
-	AviSynthWrapper(AviSynthWrapper const&);
+class AviSynthWrapper
+{
+	AviSynthWrapper(AviSynthWrapper const &);
+
 public:
-	std::mutex& GetMutex() const;
+	std::mutex &GetMutex() const;
 	IScriptEnvironment *GetEnv() const;
 
 	AviSynthWrapper();

@@ -43,8 +43,10 @@ std::unique_ptr<AudioPlayer> CreatePortAudioPlayer(agi::AudioProvider *providers
 std::unique_ptr<AudioPlayer> CreatePulseAudioPlayer(agi::AudioProvider *providers, wxWindow *window);
 std::unique_ptr<AudioPlayer> CreateOSSPlayer(agi::AudioProvider *providers, wxWindow *window);
 
-namespace {
-	struct factory {
+namespace
+{
+	struct factory
+	{
 		const char *name;
 		std::unique_ptr<AudioPlayer> (*create)(agi::AudioProvider *, wxWindow *window);
 		bool hidden;
@@ -73,11 +75,13 @@ namespace {
 	};
 }
 
-std::vector<std::string> AudioPlayerFactory::GetClasses() {
+std::vector<std::string> AudioPlayerFactory::GetClasses()
+{
 	return ::GetClasses(factories);
 }
 
-std::unique_ptr<AudioPlayer> AudioPlayerFactory::GetAudioPlayer(agi::AudioProvider *provider, wxWindow *window) {
+std::unique_ptr<AudioPlayer> AudioPlayerFactory::GetAudioPlayer(agi::AudioProvider *provider, wxWindow *window)
+{
 	if (factories.size() == 0)
 		throw AudioPlayerOpenError("No audio players are available.");
 
@@ -85,11 +89,14 @@ std::unique_ptr<AudioPlayer> AudioPlayerFactory::GetAudioPlayer(agi::AudioProvid
 	auto sorted = GetSorted(factories, preferred);
 
 	std::string error;
-	for (auto factory : sorted) {
-		try {
+	for (auto factory : sorted)
+	{
+		try
+		{
 			return factory->create(provider, window);
 		}
-		catch (AudioPlayerOpenError const& err) {
+		catch (AudioPlayerOpenError const &err)
+		{
 			agi::AppendStr(error, factory->name, " factory: ", err.GetMessage(), "\n");
 		}
 	}

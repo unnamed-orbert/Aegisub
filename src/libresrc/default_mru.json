@@ -1,9 +1,9 @@
 {
-	"Audio" : [],
-	"Find" : [],
-	"Keyframes" : [],
-	"Replace" : [],
-	"Subtitle" : [],
-	"Timecodes" : [],
-	"Video" : []
+    "Video": [],
+    "Timecodes": [],
+    "Subtitle": [],
+    "Replace": [],
+    "Keyframes": [],
+    "Find": [],
+    "Audio": []
 }

@@ -23,19 +23,19 @@
 #include <ctime>
 
 int main(int argc, char **argv) {
-	agi::dispatch::Init([](agi::dispatch::Thunk) { });
-	agi::util::InitLocale();
+    agi::dispatch::Init([](agi::dispatch::Thunk) { });
+    agi::util::InitLocale();
 
-	agi::log::log = new agi::log::LogSink;
-	agi::log::log->Subscribe(std::make_unique<agi::log::JsonEmitter>("./"));
-	::testing::InitGoogleTest(&argc, argv);
+    agi::log::log = new agi::log::LogSink;
+    agi::log::log->Subscribe(std::make_unique<agi::log::JsonEmitter>("./"));
+    ::testing::InitGoogleTest(&argc, argv);
 
-	srand(time(nullptr));
+    srand(time(nullptr));
 
-	int retval = RUN_ALL_TESTS();
+    int retval = RUN_ALL_TESTS();
 
-	delete agi::log::log;
+    delete agi::log::log;
 
-	return retval;
+    return retval;
 }
 

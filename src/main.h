@@ -36,11 +36,13 @@
 #endif
 
 class FrameMain;
-namespace agi {
+namespace agi
+{
 	struct Context;
 }
 
-class AegisubApp : public wxApp {
+class AegisubApp : public wxApp
+{
 	friend class FrameMain;
 
 	bool OnInit() override;
@@ -58,19 +60,20 @@ class AegisubApp : public wxApp {
 	void OpenFiles(wxArrayStringsAdapter filenames);
 
 	std::vector<FrameMain *> frames;
+
 public:
 	AegisubApp();
 	AegisubLocale locale;
 
-	agi::Context& NewProjectContext();
+	agi::Context &NewProjectContext();
 	void CloseAll();
 
 	// Apple events
-	void MacOpenFiles(wxArrayString const& filenames)
+	void MacOpenFiles(wxArrayString const &filenames)
 #ifdef __APPLE__
 		override
 #endif
-	;
+		;
 };
 
 wxDECLARE_APP(AegisubApp);

@@ -34,8 +34,14 @@
 class AssDialogue;
 class AssFile;
 class AudioRenderingStyleRanges;
-namespace agi { struct Context; }
-namespace agi::ass { class Karaoke; }
+namespace agi
+{
+	struct Context;
+}
+namespace agi::ass
+{
+	class Karaoke;
+}
 
 #include "audio_marker.h"
 
@@ -49,7 +55,8 @@ namespace agi::ass { class Karaoke; }
 ///
 /// The timing controller must then be sent the marker drag events as well as
 /// clicks in empty areas of the audio display.
-class AudioTimingController : public AudioMarkerProvider, public AudioLabelProvider {
+class AudioTimingController : public AudioMarkerProvider, public AudioLabelProvider
+{
 protected:
 	/// The primary playback range has changed, usually as a result of user interaction.
 	agi::signal::Signal<> AnnounceUpdatedPrimaryRange;
@@ -86,7 +93,8 @@ public:
 	/// @param[out] ranges Rendering ranges will be added to this
 	virtual void GetRenderingStyles(AudioRenderingStyleRanges &ranges) const = 0;
 
-	enum NextMode {
+	enum NextMode
+	{
 		/// Advance to the next timing unit, whether it's a line or a sub-part
 		/// of a line such as a karaoke syllable
 		TIMING_UNIT = 0,
@@ -154,7 +162,7 @@ public:
 	/// @param snap_range  Maximum snapping range in milliseconds
 	/// @return All audio markers at the clicked position which are eligible
 	///         to be dragged, if any.
-	virtual std::vector<AudioMarker*> OnLeftClick(int ms, bool ctrl_down, bool alt_down, int sensitivity, int snap_range) = 0;
+	virtual std::vector<AudioMarker *> OnLeftClick(int ms, bool ctrl_down, bool alt_down, int sensitivity, int snap_range) = 0;
 
 	/// @brief The user pressed the right mouse button on the audio
 	/// @param ms          The time in milliseconds the user clicked
@@ -163,14 +171,14 @@ public:
 	/// @param snap_range  Maximum snapping range in milliseconds
 	/// @return All audio markers at the clicked position which are eligible
 	///         to be dragged, if any.
-	virtual std::vector<AudioMarker*> OnRightClick(int ms, bool ctrl_down, int sensitivity, int snap_range) = 0;
+	virtual std::vector<AudioMarker *> OnRightClick(int ms, bool ctrl_down, int sensitivity, int snap_range) = 0;
 
 	/// @brief The user dragged one or more timing markers
 	/// @param marker       The markers being dragged. This is guaranteed to be
 	///                     a vector returned from OnLeftClick or OnRightClick.
 	/// @param new_position Time position the marker was dragged to
 	/// @param snap_range   Maximum snapping range in milliseconds
-	virtual void OnMarkerDrag(std::vector<AudioMarker*> const& marker, int new_position, int snap_range) = 0;
+	virtual void OnMarkerDrag(std::vector<AudioMarker *> const &marker, int new_position, int snap_range) = 0;
 
 	/// @brief Destructor
 	virtual ~AudioTimingController() = default;
@@ -186,4 +194,4 @@ std::unique_ptr<AudioTimingController> CreateDialogueTimingController(agi::Conte
 /// @brief Create a karaoke audio timing controller
 /// @param c Project context
 /// @param kara Karaoke model
-std::unique_ptr<AudioTimingController> CreateKaraokeTimingController(agi::Context *c, agi::ass::Karaoke *kara, agi::signal::Connection& file_changed);
+std::unique_ptr<AudioTimingController> CreateKaraokeTimingController(agi::Context *c, agi::ass::Karaoke *kara, agi::signal::Connection &file_changed);

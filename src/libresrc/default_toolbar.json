@@ -1,32 +1,5 @@
 {
-    "audio" : [
-        "time/prev",
-        "time/next",
-        "audio/play/selection",
-        "audio/play/line",
-        "audio/stop",
-        "",
-        "audio/play/selection/before",
-        "audio/play/selection/after",
-        "audio/play/selection/begin",
-        "audio/play/selection/end",
-        "audio/play/to_end",
-        "",
-        "time/lead/in",
-        "time/lead/out",
-        "",
-        "audio/commit",
-        "audio/go_to",
-        "",
-        "audio/opt/autocommit",
-        "audio/opt/autonext",
-        "audio/opt/autoscroll",
-        "audio/opt/spectrum",
-        "app/toggle/global_hotkeys",
-        "",
-        "audio/karaoke"
-    ],
-    "main" : [
+    "main": [
         "subtitle/new",
         "subtitle/open",
         "subtitle/save",
@@ -61,13 +34,40 @@
         "app/options",
         "grid/tag/cycle_hiding"
     ],
-    "video" : [
+    "audio": [
+        "time/prev",
+        "time/next",
+        "audio/play/selection",
+        "audio/play/line",
+        "audio/stop",
+        "",
+        "audio/play/selection/before",
+        "audio/play/selection/after",
+        "audio/play/selection/begin",
+        "audio/play/selection/end",
+        "audio/play/to_end",
+        "",
+        "time/lead/in",
+        "time/lead/out",
+        "",
+        "audio/commit",
+        "audio/go_to",
+        "",
+        "audio/opt/autocommit",
+        "audio/opt/autonext",
+        "audio/opt/autoscroll",
+        "audio/opt/spectrum",
+        "app/toggle/global_hotkeys",
+        "",
+        "audio/karaoke"
+    ],
+    "video": [
         "video/play",
         "video/play/line",
         "video/stop",
         "video/opt/autoscroll"
     ],
-    "visual_tools" : [
+    "visual_tools": [
         "video/tool/cross",
         "video/tool/drag",
         "video/tool/rotate/z",

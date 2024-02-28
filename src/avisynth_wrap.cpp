@@ -41,29 +41,32 @@
 #include <mutex>
 
 // Allocate storage for and initialise static members
-namespace {
+namespace
+{
 	int avs_refcount = 0;
 	HINSTANCE hLib = nullptr;
 	IScriptEnvironment *env = nullptr;
 	std::mutex AviSynthMutex;
 }
 
-typedef IScriptEnvironment* __stdcall FUNC(int);
+typedef IScriptEnvironment *__stdcall FUNC(int);
 
-AviSynthWrapper::AviSynthWrapper() {
-	if (!avs_refcount++) {
+AviSynthWrapper::AviSynthWrapper()
+{
+	if (!avs_refcount++)
+	{
 		hLib = LoadLibrary(L"avisynth.dll");
 
 		if (!hLib)
 			throw AvisynthError("Could not load avisynth.dll");
 
-		FUNC *CreateScriptEnv = (FUNC*)GetProcAddress(hLib, "CreateScriptEnvironment");
+		FUNC *CreateScriptEnv = (FUNC *)GetProcAddress(hLib, "CreateScriptEnvironment");
 		if (!CreateScriptEnv)
 			throw AvisynthError("Failed to get address of CreateScriptEnv from avisynth.dll");
 
 		// Require Avisynth 2.5.6+?
 		if (OPT_GET("Provider/Avisynth/Allow Ancient")->GetBool())
-			env = CreateScriptEnv(AVISYNTH_INTERFACE_VERSION-1);
+			env = CreateScriptEnv(AVISYNTH_INTERFACE_VERSION - 1);
 		else
 			env = CreateScriptEnv(AVISYNTH_INTERFACE_VERSION);
 
@@ -77,18 +80,22 @@ AviSynthWrapper::AviSynthWrapper() {
 	}
 }
 
-AviSynthWrapper::~AviSynthWrapper() {
-	if (!--avs_refcount) {
+AviSynthWrapper::~AviSynthWrapper()
+{
+	if (!--avs_refcount)
+	{
 		delete env;
 		FreeLibrary(hLib);
 	}
 }
 
-std::mutex& AviSynthWrapper::GetMutex() const {
+std::mutex &AviSynthWrapper::GetMutex() const
+{
 	return AviSynthMutex;
 }
 
-IScriptEnvironment *AviSynthWrapper::GetEnv() const {
+IScriptEnvironment *AviSynthWrapper::GetEnv() const
+{
 	return env;
 }
 

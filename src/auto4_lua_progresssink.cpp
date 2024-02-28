@@ -42,8 +42,9 @@
 
 using namespace agi::lua;
 
-namespace {
-	template<lua_CFunction fn>
+namespace
+{
+	template <lua_CFunction fn>
 	void set_field_to_closure(lua_State *L, const char *name, int ps_idx = -3)
 	{
 		lua_pushvalue(L, ps_idx);
@@ -63,11 +64,12 @@ namespace {
 	}
 }
 
-namespace Automation4 {
+namespace Automation4
+{
 	LuaProgressSink::LuaProgressSink(lua_State *L, ProgressSink *ps, bool allow_config_dialog)
-	: L(L)
+		: L(L)
 	{
-		auto ud = (ProgressSink**)lua_newuserdata(L, sizeof(ProgressSink*));
+		auto ud = (ProgressSink **)lua_newuserdata(L, sizeof(ProgressSink *));
 		*ud = ps;
 
 		// register progress reporting stuff
@@ -89,7 +91,8 @@ namespace Automation4 {
 		// Set aegisub.log
 		set_field_to_closure<LuaDebugOut>(L, "log", -2);
 
-		if (allow_config_dialog) {
+		if (allow_config_dialog)
+		{
 			lua_createtable(L, 0, 3);
 			set_field_to_closure<LuaDisplayDialog>(L, "display");
 			set_field_to_closure<LuaDisplayOpenDialog>(L, "open");
@@ -115,10 +118,10 @@ namespace Automation4 {
 		set_field_to_nil(L, LUA_REGISTRYINDEX, "progress_sink");
 	}
 
-	ProgressSink* LuaProgressSink::GetObjPointer(lua_State *L, int idx)
+	ProgressSink *LuaProgressSink::GetObjPointer(lua_State *L, int idx)
 	{
 		assert(lua_type(L, idx) == LUA_TUSERDATA);
-		return *((ProgressSink**)lua_touserdata(L, idx));
+		return *((ProgressSink **)lua_touserdata(L, idx));
 	}
 
 	int LuaProgressSink::LuaSetProgress(lua_State *L)
@@ -150,7 +153,8 @@ namespace Automation4 {
 		ProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
 
 		// Check trace level
-		if (lua_type(L, 1) == LUA_TNUMBER) {
+		if (lua_type(L, 1) == LUA_TNUMBER)
+		{
 			if (lua_tointeger(L, 1) > ps->GetTraceLevel())
 				return 0;
 			// remove trace level
@@ -159,7 +163,8 @@ namespace Automation4 {
 
 		// Only do format-string handling if there's more than one argument left
 		// (If there's more than one argument left, assume first is a format string and rest are format arguments)
-		if (lua_gettop(L) > 1) {
+		if (lua_gettop(L) > 1)
+		{
 			// Format the string
 			lua_getglobal(L, "string");
 			lua_getfield(L, -1, "format");
@@ -169,7 +174,8 @@ namespace Automation4 {
 			// put the format function into place
 			lua_insert(L, 1);
 			// call format function
-			if (lua_pcall(L, lua_gettop(L) - 1, 1, 0)) {
+			if (lua_pcall(L, lua_gettop(L) - 1, 1, 0))
+			{
 				// format failed so top of the stack now has an error message
 				// which we want to add position information to
 				luaL_where(L, 1);
@@ -212,17 +218,20 @@ namespace Automation4 {
 			flags |= wxFD_FILE_MUST_EXIST;
 
 		wxFileDialog diag(nullptr, message, dir, file, wildcard, flags);
-		if (ps->ShowDialog(&diag) == wxID_CANCEL) {
+		if (ps->ShowDialog(&diag) == wxID_CANCEL)
+		{
 			lua_pushnil(L);
 			return 1;
 		}
 
-		if (multiple) {
+		if (multiple)
+		{
 			wxArrayString files;
 			diag.GetPaths(files);
 
 			lua_createtable(L, files.size(), 0);
-			for (size_t i = 0; i < files.size(); ++i) {
+			for (size_t i = 0; i < files.size(); ++i)
+			{
 				lua_pushstring(L, files[i].utf8_str());
 				lua_rawseti(L, -2, i + 1);
 			}
@@ -248,7 +257,8 @@ namespace Automation4 {
 			flags |= wxFD_OVERWRITE_PROMPT;
 
 		wxFileDialog diag(ps->GetParentWindow(), message, dir, file, wildcard, flags);
-		if (ps->ShowDialog(&diag) == wxID_CANCEL) {
+		if (ps->ShowDialog(&diag) == wxID_CANCEL)
+		{
 			lua_pushnil(L);
 			return 1;
 		}

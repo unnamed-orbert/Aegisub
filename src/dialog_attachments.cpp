@@ -42,164 +42,179 @@
 #include <wx/listctrl.h>
 #include <wx/sizer.h>
 
-namespace {
-struct DialogAttachments {
-	wxDialog d;
-	AssFile *ass;
-
-	wxListView *listView;
-	wxButton *extractButton;
-	wxButton *deleteButton;
-
-	void OnAttachFont(wxCommandEvent &event);
-	void OnAttachGraphics(wxCommandEvent &event);
-	void OnExtract(wxCommandEvent &event);
-	void OnDelete(wxCommandEvent &event);
-	void OnListClick(wxListEvent &event);
-
-	void UpdateList();
-	void AttachFile(wxFileDialog &diag, wxString const& commit_msg);
-
-public:
-	DialogAttachments(wxWindow *parent, AssFile *ass);
-};
-
-DialogAttachments::DialogAttachments(wxWindow *parent, AssFile *ass)
-: d(parent, -1, _("Attachment List"))
-, ass(ass)
+namespace
 {
-	d.SetIcon(GETICON(attach_button_16));
+	struct DialogAttachments
+	{
+		wxDialog d;
+		AssFile *ass;
 
-	listView = new wxListView(&d, -1, wxDefaultPosition, wxSize(500, 200));
-	UpdateList();
+		wxListView *listView;
+		wxButton *extractButton;
+		wxButton *deleteButton;
 
-	auto attachFont = new wxButton(&d, -1, _("Attach &Font"));
-	auto attachGraphics = new wxButton(&d, -1, _("Attach &Graphics"));
-	extractButton = new wxButton(&d, -1, _("E&xtract"));
-	deleteButton = new wxButton(&d, -1, _("&Delete"));
-	extractButton->Enable(false);
-	deleteButton->Enable(false);
+		void OnAttachFont(wxCommandEvent &event);
+		void OnAttachGraphics(wxCommandEvent &event);
+		void OnExtract(wxCommandEvent &event);
+		void OnDelete(wxCommandEvent &event);
+		void OnListClick(wxListEvent &event);
 
-	auto buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-	buttonSizer->Add(attachFont, 1);
-	buttonSizer->Add(attachGraphics, 1);
-	buttonSizer->Add(extractButton, 1);
-	buttonSizer->Add(deleteButton, 1);
-	buttonSizer->Add(new HelpButton(&d, "Attachment Manager"), 1, wxLEFT, 5);
-	buttonSizer->Add(new wxButton(&d, wxID_CANCEL, _("&Close")), 1);
+		void UpdateList();
+		void AttachFile(wxFileDialog &diag, wxString const &commit_msg);
 
-	auto mainSizer = new wxBoxSizer(wxVERTICAL);
-	mainSizer->Add(listView, 1, wxTOP | wxLEFT | wxRIGHT | wxEXPAND, 5);
-	mainSizer->Add(buttonSizer, 0, wxALL | wxEXPAND, 5);
-	d.SetSizerAndFit(mainSizer);
-	d.CenterOnParent();
+	public:
+		DialogAttachments(wxWindow *parent, AssFile *ass);
+	};
 
-	attachFont->Bind(wxEVT_BUTTON, &DialogAttachments::OnAttachFont, this);
-	attachGraphics->Bind(wxEVT_BUTTON, &DialogAttachments::OnAttachGraphics, this);
-	extractButton->Bind(wxEVT_BUTTON, &DialogAttachments::OnExtract, this);
-	deleteButton->Bind(wxEVT_BUTTON, &DialogAttachments::OnDelete, this);
+	DialogAttachments::DialogAttachments(wxWindow *parent, AssFile *ass)
+		: d(parent, -1, _("Attachment List")), ass(ass)
+	{
+		d.SetIcon(GETICON(attach_button_16));
 
-	listView->Bind(wxEVT_LIST_ITEM_SELECTED, &DialogAttachments::OnListClick, this);
-	listView->Bind(wxEVT_LIST_ITEM_DESELECTED, &DialogAttachments::OnListClick, this);
-	listView->Bind(wxEVT_LIST_ITEM_FOCUSED, &DialogAttachments::OnListClick, this);
-}
+		listView = new wxListView(&d, -1, wxDefaultPosition, wxSize(500, 200));
+		UpdateList();
 
-void DialogAttachments::UpdateList() {
-	listView->ClearAll();
+		auto attachFont = new wxButton(&d, -1, _("Attach &Font"));
+		auto attachGraphics = new wxButton(&d, -1, _("Attach &Graphics"));
+		extractButton = new wxButton(&d, -1, _("E&xtract"));
+		deleteButton = new wxButton(&d, -1, _("&Delete"));
+		extractButton->Enable(false);
+		deleteButton->Enable(false);
 
-	listView->InsertColumn(0, _("Attachment name"), wxLIST_FORMAT_LEFT, 280);
-	listView->InsertColumn(1, _("Size"), wxLIST_FORMAT_LEFT, 100);
-	listView->InsertColumn(2, _("Group"), wxLIST_FORMAT_LEFT, 100);
+		auto buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+		buttonSizer->Add(attachFont, 1);
+		buttonSizer->Add(attachGraphics, 1);
+		buttonSizer->Add(extractButton, 1);
+		buttonSizer->Add(deleteButton, 1);
+		buttonSizer->Add(new HelpButton(&d, "Attachment Manager"), 1, wxLEFT, 5);
+		buttonSizer->Add(new wxButton(&d, wxID_CANCEL, _("&Close")), 1);
 
-	for (auto& attach : ass->Attachments) {
-		int row = listView->GetItemCount();
-		listView->InsertItem(row, to_wx(attach.GetFileName(true)));
-		listView->SetItem(row, 1, PrettySize(attach.GetSize()));
-		listView->SetItem(row, 2, to_wx(attach.GroupHeader()));
+		auto mainSizer = new wxBoxSizer(wxVERTICAL);
+		mainSizer->Add(listView, 1, wxTOP | wxLEFT | wxRIGHT | wxEXPAND, 5);
+		mainSizer->Add(buttonSizer, 0, wxALL | wxEXPAND, 5);
+		d.SetSizerAndFit(mainSizer);
+		d.CenterOnParent();
+
+		attachFont->Bind(wxEVT_BUTTON, &DialogAttachments::OnAttachFont, this);
+		attachGraphics->Bind(wxEVT_BUTTON, &DialogAttachments::OnAttachGraphics, this);
+		extractButton->Bind(wxEVT_BUTTON, &DialogAttachments::OnExtract, this);
+		deleteButton->Bind(wxEVT_BUTTON, &DialogAttachments::OnDelete, this);
+
+		listView->Bind(wxEVT_LIST_ITEM_SELECTED, &DialogAttachments::OnListClick, this);
+		listView->Bind(wxEVT_LIST_ITEM_DESELECTED, &DialogAttachments::OnListClick, this);
+		listView->Bind(wxEVT_LIST_ITEM_FOCUSED, &DialogAttachments::OnListClick, this);
+	}
+
+	void DialogAttachments::UpdateList()
+	{
+		listView->ClearAll();
+
+		listView->InsertColumn(0, _("Attachment name"), wxLIST_FORMAT_LEFT, 280);
+		listView->InsertColumn(1, _("Size"), wxLIST_FORMAT_LEFT, 100);
+		listView->InsertColumn(2, _("Group"), wxLIST_FORMAT_LEFT, 100);
+
+		for (auto &attach : ass->Attachments)
+		{
+			int row = listView->GetItemCount();
+			listView->InsertItem(row, to_wx(attach.GetFileName(true)));
+			listView->SetItem(row, 1, PrettySize(attach.GetSize()));
+			listView->SetItem(row, 2, to_wx(attach.GroupHeader()));
+		}
+	}
+
+	void DialogAttachments::AttachFile(wxFileDialog &diag, wxString const &commit_msg)
+	{
+		if (diag.ShowModal() == wxID_CANCEL)
+			return;
+
+		wxArrayString paths;
+		diag.GetPaths(paths);
+
+		for (auto const &fn : paths)
+			ass->InsertAttachment(std::filesystem::path(fn.wx_str()));
+
+		ass->Commit(commit_msg, AssFile::COMMIT_ATTACHMENT);
+
+		UpdateList();
+	}
+
+	void DialogAttachments::OnAttachFont(wxCommandEvent &)
+	{
+		wxFileDialog diag(&d,
+						  _("Choose file to be attached"),
+						  to_wx(OPT_GET("Path/Fonts Collector Destination")->GetString()), "", "Font Files (*.ttf)|*.ttf",
+						  wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+
+		AttachFile(diag, _("attach font file"));
+	}
+
+	void DialogAttachments::OnAttachGraphics(wxCommandEvent &)
+	{
+		wxFileDialog diag(&d,
+						  _("Choose file to be attached"),
+						  "", "",
+						  "Graphic Files (*.bmp, *.gif, *.jpg, *.ico, *.wmf)|*.bmp;*.gif;*.jpg;*.ico;*.wmf",
+						  wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+
+		AttachFile(diag, _("attach graphics file"));
+	}
+
+	void DialogAttachments::OnExtract(wxCommandEvent &)
+	{
+		long i = listView->GetFirstSelected();
+		if (i == -1)
+			return;
+
+		std::filesystem::path path;
+		bool fullPath = false;
+
+		// Multiple or single?
+		if (listView->GetNextSelected(i) != -1)
+			path = wxDirSelector(_("Select the path to save the files to:"), to_wx(OPT_GET("Path/Fonts Collector Destination")->GetString())).utf8_str().data();
+		else
+		{
+			path = SaveFileSelector(
+				_("Select the path to save the file to:"),
+				"Path/Fonts Collector Destination",
+				ass->Attachments[i].GetFileName(),
+				".ttf", "Font Files (*.ttf)|*.ttf",
+				&d);
+			fullPath = true;
+		}
+		if (path.empty())
+			return;
+
+		// Loop through items in list
+		while (i != -1)
+		{
+			auto &attach = ass->Attachments[i];
+			attach.Extract(fullPath ? path : path / attach.GetFileName());
+			i = listView->GetNextSelected(i);
+		}
+	}
+
+	void DialogAttachments::OnDelete(wxCommandEvent &)
+	{
+		size_t removed = 0;
+		for (auto i = listView->GetFirstSelected(); i != -1; i = listView->GetNextSelected(i))
+			ass->Attachments.erase(ass->Attachments.begin() + i - removed++);
+
+		ass->Commit(_("remove attachment"), AssFile::COMMIT_ATTACHMENT);
+
+		UpdateList();
+		extractButton->Enable(false);
+		deleteButton->Enable(false);
+	}
+
+	void DialogAttachments::OnListClick(wxListEvent &)
+	{
+		bool hasSel = listView->GetFirstSelected() != -1;
+		extractButton->Enable(hasSel);
+		deleteButton->Enable(hasSel);
 	}
 }
 
-void DialogAttachments::AttachFile(wxFileDialog &diag, wxString const& commit_msg) {
-	if (diag.ShowModal() == wxID_CANCEL) return;
-
-	wxArrayString paths;
-	diag.GetPaths(paths);
-
-	for (auto const& fn : paths)
-		ass->InsertAttachment(std::filesystem::path(fn.wx_str()));
-
-	ass->Commit(commit_msg, AssFile::COMMIT_ATTACHMENT);
-
-	UpdateList();
-}
-
-void DialogAttachments::OnAttachFont(wxCommandEvent &) {
-	wxFileDialog diag(&d,
-		_("Choose file to be attached"),
-		to_wx(OPT_GET("Path/Fonts Collector Destination")->GetString()), "", "Font Files (*.ttf)|*.ttf",
-		wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
-
-	AttachFile(diag, _("attach font file"));
-}
-
-void DialogAttachments::OnAttachGraphics(wxCommandEvent &) {
-	wxFileDialog diag(&d,
-		_("Choose file to be attached"),
-		"", "",
-		"Graphic Files (*.bmp, *.gif, *.jpg, *.ico, *.wmf)|*.bmp;*.gif;*.jpg;*.ico;*.wmf",
-		wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
-
-	AttachFile(diag, _("attach graphics file"));
-}
-
-void DialogAttachments::OnExtract(wxCommandEvent &) {
-	long i = listView->GetFirstSelected();
-	if (i == -1) return;
-
-	std::filesystem::path path;
-	bool fullPath = false;
-
-	// Multiple or single?
-	if (listView->GetNextSelected(i) != -1)
-		path = wxDirSelector(_("Select the path to save the files to:"), to_wx(OPT_GET("Path/Fonts Collector Destination")->GetString())).utf8_str().data();
-	else {
-		path = SaveFileSelector(
-			_("Select the path to save the file to:"),
-			"Path/Fonts Collector Destination",
-			ass->Attachments[i].GetFileName(),
-			".ttf", "Font Files (*.ttf)|*.ttf",
-			&d);
-		fullPath = true;
-	}
-	if (path.empty()) return;
-
-	// Loop through items in list
-	while (i != -1) {
-		auto& attach = ass->Attachments[i];
-		attach.Extract(fullPath ? path : path/attach.GetFileName());
-		i = listView->GetNextSelected(i);
-	}
-}
-
-void DialogAttachments::OnDelete(wxCommandEvent &) {
-	size_t removed = 0;
-	for (auto i = listView->GetFirstSelected(); i != -1; i = listView->GetNextSelected(i))
-		ass->Attachments.erase(ass->Attachments.begin() + i - removed++);
-
-	ass->Commit(_("remove attachment"), AssFile::COMMIT_ATTACHMENT);
-
-	UpdateList();
-	extractButton->Enable(false);
-	deleteButton->Enable(false);
-}
-
-void DialogAttachments::OnListClick(wxListEvent &) {
-	bool hasSel = listView->GetFirstSelected() != -1;
-	extractButton->Enable(hasSel);
-	deleteButton->Enable(hasSel);
-}
-}
-
-void ShowAttachmentsDialog(wxWindow *parent, AssFile *file) {
+void ShowAttachmentsDialog(wxWindow *parent, AssFile *file)
+{
 	DialogAttachments(parent, file).d.ShowModal();
 }

@@ -38,7 +38,8 @@
 class AssDialogueBlockOverride;
 
 /// Type of parameter
-enum class AssParameterClass {
+enum class AssParameterClass
+{
 	NORMAL,
 	ABSOLUTE_SIZE,
 	ABSOLUTE_POS_X,
@@ -53,7 +54,8 @@ enum class AssParameterClass {
 	COLOR
 };
 
-enum class VariableDataType {
+enum class VariableDataType
+{
 	INT,
 	FLOAT,
 	TEXT,
@@ -62,15 +64,16 @@ enum class VariableDataType {
 };
 
 /// A single parameter to an override tag
-class AssOverrideParameter {
+class AssOverrideParameter
+{
 	std::string value;
 	mutable std::unique_ptr<AssDialogueBlockOverride> block;
 	VariableDataType type;
 
 public:
 	AssOverrideParameter(VariableDataType type, AssParameterClass classification);
-	AssOverrideParameter(AssOverrideParameter&&) = default;
-	AssOverrideParameter& operator=(AssOverrideParameter&&) = default;
+	AssOverrideParameter(AssOverrideParameter &&) = default;
+	AssOverrideParameter &operator=(AssOverrideParameter &&) = default;
 	~AssOverrideParameter();
 
 	/// Type of parameter
@@ -80,21 +83,26 @@ public:
 	bool omitted = true;
 
 	VariableDataType GetType() const { return type; }
-	template<class T> void Set(T param);
-	template<class T> T Get() const;
-	template<class T> T Get(T def) const {
+	template <class T>
+	void Set(T param);
+	template <class T>
+	T Get() const;
+	template <class T>
+	T Get(T def) const
+	{
 		return !omitted ? Get<T>() : def;
 	}
 };
 
-class AssOverrideTag {
+class AssOverrideTag
+{
 	bool valid = false;
 
 public:
 	AssOverrideTag() = default;
-	AssOverrideTag(std::string const& text);
-	AssOverrideTag(AssOverrideTag&&) = default;
-	AssOverrideTag& operator=(AssOverrideTag&&) = default;
+	AssOverrideTag(std::string const &text);
+	AssOverrideTag(AssOverrideTag &&) = default;
+	AssOverrideTag &operator=(AssOverrideTag &&) = default;
 
 	std::string Name;
 	std::vector<AssOverrideParameter> Params;

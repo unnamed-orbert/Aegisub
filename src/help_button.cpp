@@ -60,24 +60,27 @@ static const char *pages[][2] = {
 	{"Visual Typesetting", "Visual_Typesetting"},
 };
 
-namespace {
-	const char *url(const char *page) {
-		auto it = std::lower_bound(std::begin(pages), std::end(pages), page, [](const char *pair[], const char *page) {
-			return strcmp(pair[0], page) < 0;
-		});
+namespace
+{
+	const char *url(const char *page)
+	{
+		auto it = std::lower_bound(std::begin(pages), std::end(pages), page, [](const char *pair[], const char *page)
+								   { return strcmp(pair[0], page) < 0; });
 		return it == std::end(pages) ? nullptr : (*it)[1];
 	}
 }
 
 HelpButton::HelpButton(wxWindow *parent, const char *page, wxPoint position, wxSize size)
-: wxButton(parent, wxID_HELP, "", position, size)
+	: wxButton(parent, wxID_HELP, "", position, size)
 {
-	Bind(wxEVT_BUTTON, [=](wxCommandEvent&) { OpenPage(page); });
+	Bind(wxEVT_BUTTON, [=](wxCommandEvent &)
+		 { OpenPage(page); });
 	if (!url(page))
 		throw agi::InternalError("Invalid help page");
 }
 
-void HelpButton::OpenPage(const char *pageID) {
+void HelpButton::OpenPage(const char *pageID)
+{
 	auto page = url(pageID);
 	auto sep = strchr(page, '#');
 	if (sep)

@@ -21,99 +21,121 @@
 
 #include <boost/range/algorithm/copy.hpp>
 
-namespace {
-std::vector<int> agi_keyframes(std::istream &file) {
-	double fps;
-	std::string fps_str;
-	file >> fps_str;
-	file >> fps;
+namespace
+{
+	std::vector<int> agi_keyframes(std::istream &file)
+	{
+		double fps;
+		std::string fps_str;
+		file >> fps_str;
+		file >> fps;
 
-	return {agi::line_iterator<int>(file), agi::line_iterator<int>()};
-}
-
-std::vector<int> enumerated_keyframes(std::istream &file, char (*func)(std::string const&)) {
-	int count = 0;
-	std::vector<int> ret;
-	for (auto line : agi::line_iterator<std::string>(file)) {
-		char c = tolower(func(line));
-		if (c == 'i')
-			ret.push_back(count++);
-		else if (c == 'p' || c == 'b')
-			++count;
+		return {agi::line_iterator<int>(file), agi::line_iterator<int>()};
 	}
-	return ret;
-}
 
-std::vector<int> indexed_keyframes(std::istream &file, int (*func)(std::string const&)) {
-	std::vector<int> ret;
-	for (auto line : agi::line_iterator<std::string>(file)) {
-		int frame_no = func(line);
-		if (frame_no >= 0)
-			ret.push_back(frame_no);
+	std::vector<int> enumerated_keyframes(std::istream &file, char (*func)(std::string const &))
+	{
+		int count = 0;
+		std::vector<int> ret;
+		for (auto line : agi::line_iterator<std::string>(file))
+		{
+			char c = tolower(func(line));
+			if (c == 'i')
+				ret.push_back(count++);
+			else if (c == 'p' || c == 'b')
+				++count;
+		}
+		return ret;
 	}
-	return ret;
-}
 
-char xvid(std::string const& line) {
-	return line.empty() ? 0 : line[0];
-}
-
-char divx(std::string const& line) {
-	char chrs[] = "IPB";
-	for (int i = 0; i < 3; ++i) {
-		std::string::size_type pos = line.find(chrs[i]);
-		if (pos != line.npos)
-			return line[pos];
+	std::vector<int> indexed_keyframes(std::istream &file, int (*func)(std::string const &))
+	{
+		std::vector<int> ret;
+		for (auto line : agi::line_iterator<std::string>(file))
+		{
+			int frame_no = func(line);
+			if (frame_no >= 0)
+				ret.push_back(frame_no);
+		}
+		return ret;
 	}
-	return 0;
-}
 
-char x264(std::string const& line) {
-	std::string::size_type pos = line.find("type:");
-	if (pos == line.npos || pos + 5 >= line.size()) return 0;
-	return line[pos + 5];
-}
+	char xvid(std::string const &line)
+	{
+		return line.empty() ? 0 : line[0];
+	}
 
-int wwxd(std::string const& line) {
-	if (line.empty() || line[0] == '#')
+	char divx(std::string const &line)
+	{
+		char chrs[] = "IPB";
+		for (int i = 0; i < 3; ++i)
+		{
+			std::string::size_type pos = line.find(chrs[i]);
+			if (pos != line.npos)
+				return line[pos];
+		}
+		return 0;
+	}
+
+	char x264(std::string const &line)
+	{
+		std::string::size_type pos = line.find("type:");
+		if (pos == line.npos || pos + 5 >= line.size())
+			return 0;
+		return line[pos + 5];
+	}
+
+	int wwxd(std::string const &line)
+	{
+		if (line.empty() || line[0] == '#')
+			return -1;
+		std::istringstream ss(line);
+		int frame_no;
+		char frame_type;
+		ss >> frame_no >> frame_type;
+		if (ss.fail())
+			throw agi::keyframe::KeyframeFormatParseError("WWXD keyframe file not in qpfile format");
+		if (frame_type == 'I')
+			return frame_no;
 		return -1;
-	std::istringstream ss(line);
-	int frame_no;
-	char frame_type;
-	ss >> frame_no >> frame_type;
-	if (ss.fail())
-		throw agi::keyframe::KeyframeFormatParseError("WWXD keyframe file not in qpfile format");
-	if (frame_type == 'I')
-		return frame_no;
-	return -1;
-}
+	}
 }
 
-namespace agi::keyframe {
-void Save(std::filesystem::path const& filename, std::vector<int> const& keyframes) {
-	io::Save file(filename);
-	std::ostream& of = file.Get();
-	of << "# keyframe format v1" << std::endl;
-	of << "fps " << 0 << std::endl;
-	boost::copy(keyframes, std::ostream_iterator<int>(of, "\n"));
-}
+namespace agi::keyframe
+{
+	void Save(std::filesystem::path const &filename, std::vector<int> const &keyframes)
+	{
+		io::Save file(filename);
+		std::ostream &of = file.Get();
+		of << "# keyframe format v1" << std::endl;
+		of << "fps " << 0 << std::endl;
+		boost::copy(keyframes, std::ostream_iterator<int>(of, "\n"));
+	}
 
-std::vector<int> Load(std::filesystem::path const& filename) {
-	auto file = io::Open(filename);
-	std::istream &is(*file);
+	std::vector<int> Load(std::filesystem::path const &filename)
+	{
+		auto file = io::Open(filename);
+		std::istream &is(*file);
 
-	std::string header;
-	getline(is, header);
+		std::string header;
+		getline(is, header);
 
-	if (header == "# keyframe format v1") return agi_keyframes(is);
-	if (header.starts_with("# XviD 2pass stat file")) return enumerated_keyframes(is, xvid);
-	if (header.starts_with("# ffmpeg 2-pass log file, using xvid codec")) return enumerated_keyframes(is, xvid);
-	if (header.starts_with("# avconv 2-pass log file, using xvid codec")) return enumerated_keyframes(is, xvid);
-	if (header.starts_with("##map version")) return enumerated_keyframes(is, divx);
-	if (header.starts_with("#options:")) return enumerated_keyframes(is, x264);
-	if (header.starts_with("# WWXD log file, using qpfile format")) return indexed_keyframes(is, wwxd);
+		if (header == "# keyframe format v1")
+			return agi_keyframes(is);
+		if (header.starts_with("# XviD 2pass stat file"))
+			return enumerated_keyframes(is, xvid);
+		if (header.starts_with("# ffmpeg 2-pass log file, using xvid codec"))
+			return enumerated_keyframes(is, xvid);
+		if (header.starts_with("# avconv 2-pass log file, using xvid codec"))
+			return enumerated_keyframes(is, xvid);
+		if (header.starts_with("##map version"))
+			return enumerated_keyframes(is, divx);
+		if (header.starts_with("#options:"))
+			return enumerated_keyframes(is, x264);
+		if (header.starts_with("# WWXD log file, using qpfile format"))
+			return indexed_keyframes(is, wwxd);
 
-	throw UnknownKeyframeFormatError("File header does not match any known formats");
-}
+		throw UnknownKeyframeFormatError("File header does not match any known formats");
+	}
 
 }
